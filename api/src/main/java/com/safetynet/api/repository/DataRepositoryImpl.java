@@ -1,42 +1,39 @@
 package com.safetynet.api.repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.api.model.FireStation;
-import com.safetynet.api.model.MedicalRecord;
-import com.safetynet.api.model.Person;
+import com.safetynet.api.repository.dto.DataDto;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 @Repository
 public class DataRepositoryImpl implements DataRepository {
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final Logger logger = LogManager.getLogger(DataRepositoryImpl.class);
 
-    public List<Person> getAllPerson(){
-        try {
-            return objectMapper.readValue(new File("src/main/resources/Données.json"),new TypeReference<List<Person>>(){});
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de la lecture de la list de personne"+e);
+    private final ObjectMapper mapper;
+
+    private final DataDto allData;
+
+    public DataRepositoryImpl(ObjectMapper mapper) {
+        this.mapper = mapper;
+        this.allData = getData();
+    }
+
+    public DataDto getData(){
+        try{
+            return mapper.readValue(new File("src/main/resources/Data.json"), DataDto.class);
+        } catch (IOException e){
+            logger.error("Echec de la lecture du json");
+            throw new RuntimeException("Erreur lors de la lecture du fichier"+e);
         }
     }
 
-    public List<FireStation> getAllFireStation(){
-        try {
-            return objectMapper.readValue(new File("src/main/resources/Données.json"),new TypeReference<List<FireStation>>(){});
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de la lecture de la list de FireStation"+e);
-        }
-    }
-
-    public List<MedicalRecord> getAllMedicalRecord(){
-        try {
-            return objectMapper.readValue(new File("src/main/resources/Données.json"),new TypeReference<List<MedicalRecord>>(){});
-        } catch (IOException e) {
-            throw new RuntimeException("Erreur lors de la lecture de la list de MedicalRecord"+e);
-        }
+    @Override
+    public DataDto getAllData(){
+        return allData;
     }
 }

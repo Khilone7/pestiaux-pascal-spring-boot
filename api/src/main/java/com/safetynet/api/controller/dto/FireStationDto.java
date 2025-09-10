@@ -1,4 +1,4 @@
-package com.safetynet.api.dto;
+package com.safetynet.api.controller.dto;
 
 import java.util.List;
 

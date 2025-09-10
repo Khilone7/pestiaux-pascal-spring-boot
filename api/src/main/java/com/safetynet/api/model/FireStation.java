@@ -6,5 +6,5 @@ import lombok.Data;
 public class FireStation {
 
     private String address;
-    private byte station;
+    private Long station;
 }
