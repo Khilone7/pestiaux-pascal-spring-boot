@@ -1,6 +1,5 @@
 package com.safetynet.api.controller;
 
-import com.safetynet.api.controller.dto.ChildAlertDto;
 import com.safetynet.api.service.ChildAlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

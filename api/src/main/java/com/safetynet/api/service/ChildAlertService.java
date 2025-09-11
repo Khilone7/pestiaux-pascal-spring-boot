@@ -1,6 +1,6 @@
 package com.safetynet.api.service;
 
-import com.safetynet.api.controller.dto.ChildAlertDto;
+import com.safetynet.api.controller.dto.ListChildDto;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.MedicalRecordsRepository;
@@ -26,18 +26,21 @@ public class ChildAlertService {
     private final MedicalRecordsRepository medicalRecordsRepository;
     private final PersonRepository personRepository;
 
-    public ChildAlertDto.ListChildDto getChildByAddress(String address) {
+    /*
+    public ListChildDto getChildByAddress(String address) {
         List<Person> person = getPersonByAddress(address);
         Map<Person, Integer> personAge = getPersonAge(person);
 
-        List<ChildAlertDto.ChildDto> childList = getChildList(personAge);
+        List<ListChildDto.ChildDto> childList = getChildList(personAge);
         if (childList.isEmpty()) {
-            return new ChildAlertDto.ListChildDto(Collections.emptyList(), Collections.emptyList());
+            return new ListChildDto.ChildDto (Collections.emptyList(), Collections.emptyList());
         }
-        List<ChildAlertDto.AdultDto> adultList = getAdultList(personAge);
+        List< ListChildDto.AdultDto> adultList = getAdultList(personAge);
 
-        return new ChildAlertDto.ListChildDto(childList, adultList);
+        return new ListChildDto(childList, adultList);
     }
+
+     */
 
     public List<Person> getPersonByAddress(String address) {
         return personRepository.getAllPerson()

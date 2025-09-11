@@ -16,7 +16,6 @@ import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
 public class FireStationService {
 
@@ -25,7 +24,6 @@ public class FireStationService {
     private final PersonRepository personRepository;
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
-
 
     public FireStationService(PersonRepository personRepository, FireStationRepository fireStationRepository, MedicalRecordsRepository medicalRecordsRepository) {
         this.personRepository = personRepository;
