@@ -9,6 +9,7 @@ import com.safetynet.api.repository.MedicalRecordsRepository;
 import com.safetynet.api.repository.PersonRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-@org.springframework.stereotype.Service
+@Service
 public class FireStationService {
 
     private static final Logger logger = LogManager.getLogger(FireStationService.class);
