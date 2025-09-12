@@ -21,7 +21,7 @@ public class PhoneAlertService {
         return getPhoneByAddresses(addresses);
     }
 
-    public List<String> getAddressesByStation(Long station) {
+    private List<String> getAddressesByStation(Long station) {
         return fireStationRepository.getAllFireStation()
                 .stream()
                 .filter(f -> station.equals(f.getStation()))
@@ -29,7 +29,7 @@ public class PhoneAlertService {
                 .toList();
     }
 
-    public List<String>getPhoneByAddresses(List<String>addresses){
+    private List<String>getPhoneByAddresses(List<String>addresses){
         return personRepository.getAllPerson()
                 .stream()
                 .filter(p -> addresses.contains(p.getAddress()))

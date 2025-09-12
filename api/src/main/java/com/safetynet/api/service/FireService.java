@@ -1,6 +1,7 @@
 package com.safetynet.api.service;
 
-import com.safetynet.api.controller.dto.FireDto;
+import com.safetynet.api.controller.dto.ListPersonAndStationDto;
+import com.safetynet.api.controller.dto.PersonAndMedicationDto;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -25,34 +26,34 @@ public class FireService {
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
-    public FireDto.ListPersonAndStationDto getPersonAndStationByAddress(String address) {
-        Long stationNumber = getStationNumberByAddress(address);
+    public ListPersonAndStationDto getPersonAndStationByAddress(String address) {
+        Optional<Long> stationNumber = getStationNumberByAddress(address);
         List<Person> personList = getPersonByAddress(address);
-        Set<String> personName = getFirstAndLastName(personList);
-        List<MedicalRecord> personMedicalRecords = getMedicalRecordByPerson(personName);
 
-        List<FireDto.PersonDto> personDtoList = personList.stream().map()
-
-    }
-
-    public Map<String, MedicalRecord> medicalRecordMap() {
-        return medicalRecordsRepository.getAllMedicalRecord()
+        Map<String, MedicalRecord> medicalRecordMap = medicalRecordsRepository.getAllMedicalRecord()
                 .stream()
                 .collect(Collectors.toMap(m -> m.getFirstName() + m.getLastName(), m -> m));
+
+        List<PersonAndMedicationDto> personDtoList = personList
+                .stream()
+                .map(p -> { MedicalRecord m = medicalRecordMap.get(p.getFirstName()+p.getLastName());
+                return buildPersonDto(p,m);})
+                .toList();
+        return new ListPersonAndStationDto(personDtoList,stationNumber);
     }
 
-    public FireDto.PersonDto buildPersonDto(Person person, MedicalRecord medicalRecord) {
-        Long age = (long) Period.between(medicalRecord.getBirthdate(), LocalDate.now()).getYears();
-        return new FireDto.PersonDto(person.getLastName(), person.getPhone(), age, medicalRecord.getMedications(), medicalRecord.getAllergies());
+    public PersonAndMedicationDto buildPersonDto(Person person, MedicalRecord medicalRecord) {
+        int age = Period.between(medicalRecord.getBirthdate(), LocalDate.now()).getYears();
+        return new PersonAndMedicationDto(person.getLastName(), person.getPhone(), age, medicalRecord.getMedications(), medicalRecord.getAllergies());
     }
 
-    public Long getStationNumberByAddress(String address) {
-        for (FireStation f : fireStationRepository.getAllFireStation()) {
-            if (address.equals(f.getAddress())) {
-                return f.getStation();
-            }
-        }
-        return null;
+    public Optional<Long> getStationNumberByAddress(String address) {
+        return fireStationRepository.getAllFireStation()
+                .stream()
+                .filter(f -> f.getAddress().equals(address))
+                .map(FireStation::getStation)
+                .findFirst();
+
     }
 
     public List<Person> getPersonByAddress(String address) {
@@ -61,21 +62,5 @@ public class FireService {
                 .filter(p -> address.equals(p.getAddress()))
                 .toList();
     }
-
-    public String nameKey(String firstName, String lastName) {
-        return firstName + lastName;
-    }
-
-    public Set<String> getFirstAndLastName(List<Person> personList) {
-        return personList.stream().map(p -> p.getFirstName() + p.getLastName()).collect(Collectors.toSet());
-    }
-
-    public List<MedicalRecord> getMedicalRecordByPerson(Set<String> personName) {
-        return medicalRecordsRepository.getAllMedicalRecord()
-                .stream()
-                .filter(m -> personName.contains(m.getFirstName() + m.getLastName()))
-                .toList();
-    }
-
 
 }

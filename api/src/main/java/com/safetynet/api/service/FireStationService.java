@@ -1,6 +1,7 @@
 package com.safetynet.api.service;
 
-import com.safetynet.api.controller.dto.FireStationDto;
+import com.safetynet.api.controller.dto.PersonDto;
+import com.safetynet.api.controller.dto.StationDto;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.model.Person;
@@ -31,7 +32,7 @@ public class FireStationService {
         this.medicalRecordsRepository = medicalRecordsRepository;
     }
 
-    public FireStationDto.StationDto getPersonsByStation(Long station) {
+    public StationDto getPersonsByStation(Long station) {
 
         List<String> address = addressesByStation(station);
         List<Person> listNonFilter = personByAddress(address);
@@ -39,9 +40,9 @@ public class FireStationService {
         int child = childNumber(listNonFilter);
         int adult = adultNumber(listNonFilter, child);
 
-        List<FireStationDto.PersonDto> listFilter = listNonFilter.stream().map(p -> new FireStationDto.PersonDto(p.getFirstName(), p.getLastName(), p.getAddress(), p.getPhone())).toList();
+        List<PersonDto> listFilter = listNonFilter.stream().map(p -> new PersonDto(p.getFirstName(), p.getLastName(), p.getAddress(), p.getPhone())).toList();
 
-        return new FireStationDto.StationDto(listFilter, child, adult);
+        return new StationDto(listFilter, child, adult);
     }
 
     public List<String> addressesByStation(Long station) {
