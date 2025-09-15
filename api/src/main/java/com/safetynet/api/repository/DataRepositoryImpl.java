@@ -20,10 +20,10 @@ public class DataRepositoryImpl implements DataRepository {
 
     public DataRepositoryImpl(ObjectMapper mapper) {
         this.mapper = mapper;
-        this.allData = getData();
+        this.allData = getDataOnce();
     }
 
-    public DataDto getData(){
+    public DataDto getDataOnce(){
         try{
             return mapper.readValue(new File("src/main/resources/Data.json"), DataDto.class);
         } catch (IOException e){

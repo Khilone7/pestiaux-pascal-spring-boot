@@ -42,12 +42,12 @@ public class FireService {
         return new ListPersonAndStationDto(personDtoList,stationNumber);
     }
 
-    public PersonAndMedicationDto buildPersonDto(Person person, MedicalRecord medicalRecord) {
+    private PersonAndMedicationDto buildPersonDto(Person person, MedicalRecord medicalRecord) {
         int age = Period.between(medicalRecord.getBirthdate(), LocalDate.now()).getYears();
         return new PersonAndMedicationDto(person.getLastName(), person.getPhone(), age, medicalRecord.getMedications(), medicalRecord.getAllergies());
     }
 
-    public Optional<Long> getStationNumberByAddress(String address) {
+    private Optional<Long> getStationNumberByAddress(String address) {
         return fireStationRepository.getAllFireStation()
                 .stream()
                 .filter(f -> f.getAddress().equals(address))
@@ -56,7 +56,7 @@ public class FireService {
 
     }
 
-    public List<Person> getPersonByAddress(String address) {
+    private List<Person> getPersonByAddress(String address) {
         return personRepository.getAllPerson()
                 .stream()
                 .filter(p -> address.equals(p.getAddress()))
