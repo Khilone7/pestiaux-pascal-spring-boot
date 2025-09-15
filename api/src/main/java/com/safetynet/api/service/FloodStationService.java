@@ -1,6 +1,5 @@
 package com.safetynet.api.service;
 
-import com.safetynet.api.controller.dto.HouseholdDto;
 import com.safetynet.api.controller.dto.ResidentDto;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.model.MedicalRecord;
@@ -25,7 +24,7 @@ public class FloodStationService {
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
-    public List<HouseholdDto> getListResidentAndMedicationByAddresses(List<Long> stationsNumbers) {
+    public Map<String, List<ResidentDto>> getListResidentAndMedicationByAddresses(List<Long> stationsNumbers) {
 
         List<String> addresses = getAddressesByStationsNumber(stationsNumbers);
         List<Person> personList = getPersonsByAddresses(addresses);
@@ -34,15 +33,12 @@ public class FloodStationService {
                 .stream()
                 .collect(Collectors.toMap(m -> m.getFirstName() + m.getLastName(), m -> m));
 
-        return personList.stream()
+        return  personList.stream()
                 .collect(Collectors.groupingBy(Person::getAddress, Collectors.mapping(p -> {
-                            MedicalRecord mr = medicalRecordMap.get(p.getFirstName() + p.getLastName());
-                            int age = Period.between(mr.getBirthdate(), LocalDate.now()).getYears();
-                            return new ResidentDto(p.getLastName(), p.getPhone(), age, mr.getMedications(), mr.getAllergies());
-                        }, Collectors.toList())))
-                .entrySet().stream()
-                .map(e -> new HouseholdDto(e.getKey(), e.getValue()))
-                .toList();
+                    MedicalRecord mr = medicalRecordMap.get(p.getFirstName() + p.getLastName());
+                    int age = Period.between(mr.getBirthdate(), LocalDate.now()).getYears();
+                    return new ResidentDto(p.getLastName(), p.getPhone(), age, mr.getMedications(), mr.getAllergies());
+                }, Collectors.toList())));
     }
 
     private List<String> getAddressesByStationsNumber(List<Long> stationsNumbers) {
