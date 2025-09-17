@@ -13,7 +13,7 @@ public class CommunityEmailService {
 
     private final PersonRepository personRepository;
 
-    public List<String> getAllEmailByCity (String city){
+    public List<String> getEmailByCity (String city){
         return personRepository.getAllPerson()
                 .stream()
                 .filter(p -> city.equals(p.getZip()))

@@ -24,7 +24,7 @@ public class FloodStationService {
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
-    public Map<String, List<ResidentDto>> getListResidentAndMedicationByAddresses(List<Long> stationsNumbers) {
+    public Map<String, List<ResidentDto>> getListResidentAndAddressAndMedicationByStation(List<Long> stationsNumbers) {
 
         List<String> addresses = getAddressesByStationsNumber(stationsNumbers);
         List<Person> personList = getPersonsByAddresses(addresses);

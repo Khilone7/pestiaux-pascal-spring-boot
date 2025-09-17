@@ -17,7 +17,7 @@ public class FloodStationController {
     private final FloodStationService floodStationService;
 
     @GetMapping("flood/stations")
-    public Map<String,List<ResidentDto>> getListResidentAndMedicationByAddresses (@RequestParam("stations") List<Long> stationNumbers){
-        return floodStationService.getListResidentAndMedicationByAddresses(stationNumbers);
+    public Map<String,List<ResidentDto>> getListResidentAndAddressAndMedicationByStation (@RequestParam("stations") List<Long> stationNumbers){
+        return floodStationService.getListResidentAndAddressAndMedicationByStation(stationNumbers);
     }
 }

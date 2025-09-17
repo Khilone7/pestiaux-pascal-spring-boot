@@ -1,4 +1,6 @@
 package com.safetynet.api.controller;
 
-public class PhoneAlertControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class PhoneAlertControllerTest {
 }
