@@ -16,7 +16,7 @@ public class CommunityEmailService {
     public List<String> getEmailByCity (String city){
         return personRepository.getAllPerson()
                 .stream()
-                .filter(p -> city.equals(p.getZip()))
+                .filter(p -> city.equals(p.getCity()))
                 .map(Person::getEmail)
                 .toList();
     }

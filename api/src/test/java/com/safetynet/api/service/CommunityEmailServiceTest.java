@@ -20,7 +20,6 @@ class CommunityEmailServiceTest {
 
     @Mock
     PersonRepository personRepository;
-
     @InjectMocks
     CommunityEmailService communityEmailService;
 
@@ -30,35 +29,31 @@ class CommunityEmailServiceTest {
     void setUp() {
         person1 = new Person();
         person1.setEmail("1111@gmail.com");
-        person1.setZip("12345");
+        person1.setCity("Paris");
 
         person2 = new Person();
         person2.setEmail("2222@gmail.com");
-        person2.setZip("54321");
+        person2.setCity("Marseille");
 
         when(personRepository.getAllPerson()).thenReturn(List.of(person1,person2));
     }
 
     @Test
     void getEmailByCityShouldReturnEmail1(){
-        List<String> result = communityEmailService.getEmailByCity("12345");
-
+        List<String> result = communityEmailService.getEmailByCity("Paris");
         assertThat(result).hasSize(1);
         assertThat(result.getFirst()).contains("1111@gmail.com");
     }
 
     @Test
     void getEmailByCityShouldReturnNothingWhenZipIncomplete(){
-        List<String> result = communityEmailService.getEmailByCity("123");
-
+        List<String> result = communityEmailService.getEmailByCity("Pars");
         assertTrue(result.isEmpty());
     }
 
     @Test
     void getEmailByCityShouldReturnNothingBecauseWrongCity(){
-        List<String> result = communityEmailService.getEmailByCity("23456");
-
+        List<String> result = communityEmailService.getEmailByCity("Lille");
         assertTrue(result.isEmpty());
     }
-
 }
