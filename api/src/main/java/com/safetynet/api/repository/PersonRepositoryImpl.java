@@ -36,4 +36,10 @@ public class PersonRepositoryImpl implements PersonRepository {
             }
         }
     }
+
+    @Override
+    public void deletePerson(String firstName, String lastName) {
+        allPerson.removeIf(p -> p.getFirstName().equals(firstName)
+                && p.getLastName().equals(lastName));
+    }
 }
