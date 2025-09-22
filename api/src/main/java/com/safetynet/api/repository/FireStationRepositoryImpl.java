@@ -35,4 +35,14 @@ public class FireStationRepositoryImpl implements FireStationRepository{
             }
         }
     }
+
+    @Override
+    public void deleteByAddress(String address) {
+        fireStationList.removeIf(f -> f.getAddress().equals(address));
+    }
+
+    @Override
+    public void deleteByStationNumber(Long station) {
+        fireStationList.removeIf(f -> f.getStation().equals(station));
+    }
 }

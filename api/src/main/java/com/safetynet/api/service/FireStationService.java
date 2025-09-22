@@ -1,5 +1,6 @@
 package com.safetynet.api.service;
 
+import com.safetynet.api.controller.dto.DeleteFireStationDto;
 import com.safetynet.api.controller.dto.PersonDto;
 import com.safetynet.api.controller.dto.StationDto;
 import com.safetynet.api.model.FireStation;
@@ -109,5 +110,17 @@ public class FireStationService {
         }else {
             throw new RuntimeException("This fire station does not exists");
         }
+    }
+
+    public void deleteFireStation(DeleteFireStationDto fireStationDto) {
+        if (fireStationDto.address().isPresent() == fireStationDto.station().isPresent()) {
+            throw new IllegalArgumentException("Provide exactly one address or one station number.");
+        }
+        fireStationDto.address().ifPresent(fireStationRepository::deleteByAddress);
+        fireStationDto.station().ifPresent(fireStationRepository::deleteByStationNumber);
+    }
+
+    public List<FireStation> getAllStation(){
+        return fireStationRepository.getAllFireStation();
     }
 }

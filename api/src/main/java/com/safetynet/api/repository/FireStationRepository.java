@@ -8,6 +8,12 @@ import java.util.List;
 @Repository
 public interface FireStationRepository {
     List<FireStation> getAllFireStation();
+
     void addFireStation(FireStation fireStation);
+
     void updateStationNumber(FireStation fireStation);
+
+    void deleteByAddress(String address);
+
+    void deleteByStationNumber(Long station);
 }
