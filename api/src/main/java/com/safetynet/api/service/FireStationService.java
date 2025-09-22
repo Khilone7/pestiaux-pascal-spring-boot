@@ -87,4 +87,27 @@ public class FireStationService {
         logger.debug("La personne a {} ans", period.getYears());
         return period.getYears();
     }
+
+    public void addFireStation(FireStation fireStation){
+        boolean exists = fireStationRepository.getAllFireStation()
+                .stream()
+                .anyMatch(f -> f.getAddress().equals(fireStation.getAddress())
+                            && f.getStation().equals(fireStation.getStation()));
+        if (exists){
+            throw new RuntimeException("This fire station already exist");
+        }else{
+            fireStationRepository.addFireStation(fireStation);
+        }
+    }
+
+    public void updateFireStationNumber(FireStation fireStation){
+        boolean exists = fireStationRepository.getAllFireStation()
+                .stream()
+                .anyMatch(f -> f.getAddress().equals(fireStation.getAddress()));
+        if (exists){
+            fireStationRepository.updateStationNumber(fireStation);
+        }else {
+            throw new RuntimeException("This fire station does not exists");
+        }
+    }
 }
