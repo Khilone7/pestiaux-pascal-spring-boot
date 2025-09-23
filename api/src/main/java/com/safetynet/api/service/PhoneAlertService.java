@@ -21,6 +21,15 @@ public class PhoneAlertService {
         return getPhoneByAddresses(addresses);
     }
 
+    public Long countAddressesByStation(Long station) {
+        return  fireStationRepository.getAllFireStation()
+                .stream()
+                .filter(f -> station.equals(f.getStation()))
+                .map(FireStation::getAddress)
+                .distinct()
+                .count();
+    }
+
     private List<String> getAddressesByStation(Long station) {
         return fireStationRepository.getAllFireStation()
                 .stream()

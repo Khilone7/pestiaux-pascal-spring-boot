@@ -7,19 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/medicalRecord")
 @RequiredArgsConstructor
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
-
-    @GetMapping("/all")
-    public List<MedicalRecord> getAllMr(){
-        return medicalRecordService.getAllMr();
-    }
 
     @PostMapping
     public ResponseEntity<Void> addMedicalRecord(@RequestBody MedicalRecord medicalRecord){

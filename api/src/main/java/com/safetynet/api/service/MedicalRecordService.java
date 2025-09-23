@@ -6,8 +6,6 @@ import com.safetynet.api.repository.MedicalRecordsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class MedicalRecordService {
@@ -43,9 +41,5 @@ public class MedicalRecordService {
         }else {
             throw new RuntimeException("This medical record does not exists");
         }
-    }
-
-    public List<MedicalRecord> getAllMr(){
-        return medicalRecordsRepository.getAllMedicalRecord();
     }
 }
