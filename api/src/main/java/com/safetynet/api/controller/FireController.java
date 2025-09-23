@@ -20,10 +20,9 @@ public class FireController {
         log.info("REQUEST GET /fire?address={}", address);
 
         ListPersonAndStationDto result = fireService.getPersonAndStationByAddress(address);
-        String stationMsg = result.stationNumber().map(Object::toString).orElse("No station number at this address");
 
         log.info("RESPONSE GET /fire -> 200 OK | {} people at address {} are served by station {}",
-                result.listPerson().size(), address, stationMsg);
+                result.listPerson().size(), address, result.stationNumber());
         return result;
     }
 }

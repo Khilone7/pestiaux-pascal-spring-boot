@@ -10,8 +10,7 @@ import com.safetynet.api.repository.FireStationRepository;
 import com.safetynet.api.repository.MedicalRecordsRepository;
 import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,18 +18,16 @@ import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class FireStationService {
-
-    private static final Logger logger = LogManager.getLogger(FireStationService.class);
 
     private final PersonRepository personRepository;
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
     public StationDto getPersonsByStation(Long station) {
-
         List<String> address = addressesByStation(station);
         List<Person> listNonFilter = getPersonByAddresses(address);
 
@@ -38,23 +35,26 @@ public class FireStationService {
         Long adult = adultNumber(listNonFilter, child);
 
         List<PersonDto> listFilter = listNonFilter.stream().map(p -> new PersonDto(p.getFirstName(), p.getLastName(), p.getAddress(), p.getPhone())).toList();
-
         return new StationDto(listFilter, child, adult);
     }
 
     private List<String> addressesByStation(Long station) {
-        return fireStationRepository.getAllFireStation()
+        List<String> addresses = fireStationRepository.getAllFireStation()
                 .stream()
                 .filter(f -> station.equals(f.getStation()))
                 .map(FireStation::getAddress)
                 .toList();
+        log.debug("Station {} covers {} addresses", station, addresses.size());
+        return addresses;
     }
 
     private List<Person> getPersonByAddresses(List<String> address) {
-        return personRepository.getAllPerson()
+        List<Person> persons = personRepository.getAllPerson()
                 .stream()
                 .filter(p -> address.contains(p.getAddress()))
                 .toList();
+        log.debug("There are {} persons across {} addresses", persons.size(), address.size());
+        return persons;
     }
 
     private Long childNumber(List<Person> listPerson) {
@@ -72,20 +72,19 @@ public class FireStationService {
                 })
                 .count();
 
-        logger.debug("Il y'a {} enfants dan la liste", child);
+        log.debug("There are {} children in the list", child);
         return child;
     }
 
 
     private Long adultNumber(List<Person> listPerson, Long child) {
         Long adult = listPerson.size() - child;
-        logger.debug("Il y'a {} adultes dans la liste", adult);
+        log.debug("There are {} adults in the list", adult);
         return adult;
     }
 
     private int calculateAge(LocalDate birthdate, LocalDate currentDate) {
         Period period = Period.between(birthdate, currentDate);
-        logger.debug("La personne a {} ans", period.getYears());
         return period.getYears();
     }
 
@@ -95,7 +94,7 @@ public class FireStationService {
                 .anyMatch(f -> f.getAddress().equals(fireStation.getAddress())
                             && f.getStation().equals(fireStation.getStation()));
         if (exists){
-            throw new RuntimeException("This fire station already exist");
+            throw new IllegalStateException("This fire station already exist");
         }else{
             fireStationRepository.addFireStation(fireStation);
         }
@@ -108,7 +107,7 @@ public class FireStationService {
         if (exists){
             fireStationRepository.updateStationNumber(fireStation);
         }else {
-            throw new RuntimeException("This fire station does not exists");
+            throw new NoSuchElementException("This fire station does not exists");
         }
     }
 

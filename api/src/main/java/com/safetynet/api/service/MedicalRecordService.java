@@ -6,6 +6,8 @@ import com.safetynet.api.repository.MedicalRecordsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class MedicalRecordService {
@@ -21,7 +23,7 @@ public class MedicalRecordService {
 
     public void addMedicalRecord(MedicalRecord medicalRecord) {
         if(exists(medicalRecord.getFirstName(),medicalRecord.getLastName())){
-            throw new RuntimeException("This medical record already exists");
+            throw new IllegalStateException("This medical record already exists");
         }else{
             medicalRecordsRepository.addMedicalRecord(medicalRecord);
         }
@@ -31,7 +33,7 @@ public class MedicalRecordService {
         if (exists(medicalRecord.getFirstName(),medicalRecord.getLastName())){
             medicalRecordsRepository.updateMedicalRecord(medicalRecord);
         }else {
-            throw new RuntimeException("This medical record does not exists");
+            throw new NoSuchElementException("This medical record does not exists");
         }
     }
 
@@ -39,7 +41,7 @@ public class MedicalRecordService {
         if (exists(fullName.firstName(),fullName.lastName())){
             medicalRecordsRepository.deleteMedicalRecord(fullName.firstName(), fullName.lastName());
         }else {
-            throw new RuntimeException("This medical record does not exists");
+            throw new NoSuchElementException("This medical record does not exists");
         }
     }
 }

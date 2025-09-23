@@ -6,6 +6,8 @@ import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class PersonService {
@@ -21,7 +23,7 @@ public class PersonService {
 
     public void addPerson(Person person) {
         if (exists(person.getFirstName(),person.getLastName())){
-            throw new RuntimeException("This person already exists");
+            throw new IllegalStateException("This personList already exists");
         } else {
             personRepository.addPerson(person);
         }
@@ -31,7 +33,7 @@ public class PersonService {
         if (exists(person.getFirstName(),person.getLastName())){
             personRepository.updatePerson(person);
         } else {
-            throw new RuntimeException("This person does not exists");
+            throw new NoSuchElementException("This personList does not exists");
         }
     }
 
@@ -39,7 +41,7 @@ public class PersonService {
         if (exists(fullName.firstName(), fullName.lastName())){
             personRepository.deletePerson(fullName.firstName(), fullName.lastName());
         } else {
-            throw new RuntimeException("This person does not exists");
+            throw new NoSuchElementException("This personList does not exists");
         }
     }
 }

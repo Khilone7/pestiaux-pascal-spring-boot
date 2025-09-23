@@ -14,13 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.tuple;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class FireServiceTest {
@@ -69,11 +67,11 @@ class FireServiceTest {
         station1 = FireStation.builder().station(1L).address("24 rue de l'église").build();
         station2 = FireStation.builder().station(2L).address("2 rue de l'église").build();
 
-        when(personRepository.getAllPerson())
+        lenient().when(personRepository.getAllPerson())
                 .thenReturn(List.of(person1, person2, person3));
-        when(fireStationRepository.getAllFireStation())
+        lenient().when(fireStationRepository.getAllFireStation())
                 .thenReturn(List.of(station1, station2));
-        when(medicalRecordsRepository.getAllMedicalRecord())
+        lenient().when(medicalRecordsRepository.getAllMedicalRecord())
                 .thenReturn(List.of(personMr1, personMr2, personMr3));
     }
 
@@ -81,7 +79,7 @@ class FireServiceTest {
     void getTwoPersonAndOneStationByAddress() {
         ListPersonAndStationDto result = fireService.getPersonAndStationByAddress("24 rue de l'église");
 
-        assertThat(result.stationNumber()).contains(1L);
+        assertThat(result.stationNumber()).isEqualTo(1L);
         assertThat(result.listPerson()).hasSize(2);
         assertThat(result.listPerson())
                 .extracting("lastName", "phone", "age", "medication", "allergies")
@@ -93,7 +91,7 @@ class FireServiceTest {
     void getOnePersonAndOneStationByAddress() {
         ListPersonAndStationDto result = fireService.getPersonAndStationByAddress("2 rue de l'église");
 
-        assertThat(result.stationNumber()).contains(2L);
+        assertThat(result.stationNumber()).isEqualTo(2L);
         assertThat(result.listPerson()).hasSize(1);
         assertThat(result.listPerson())
                 .extracting("lastName", "phone", "age", "medication", "allergies")
@@ -101,10 +99,9 @@ class FireServiceTest {
     }
 
     @Test
-    void getNotingWhenWrongAddress() {
-        ListPersonAndStationDto result = fireService.getPersonAndStationByAddress("243 rue de l'église");
-
-        assertThat(result.stationNumber()).isEmpty();
-        assertThat(result.listPerson()).isEmpty();
+    void getErrorWhenWrongAddress() {
+        assertThatThrownBy(() -> fireService.getPersonAndStationByAddress("242 rue de l'église"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("No station number found");
     }
 }

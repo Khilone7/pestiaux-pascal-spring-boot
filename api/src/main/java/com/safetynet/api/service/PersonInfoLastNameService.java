@@ -6,6 +6,7 @@ import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.MedicalRecordsRepository;
 import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class PersonInfoLastNameService {
@@ -38,9 +40,11 @@ public class PersonInfoLastNameService {
     }
 
     private List<Person> getPersonListByLastName(String lastName) {
-        return personRepository.getAllPerson()
+        List<Person> persons = personRepository.getAllPerson()
                 .stream()
                 .filter(p -> p.getLastName().equals(lastName))
                 .toList();
+        log.debug("There are {} persons with last name '{}'", persons.size(), lastName);
+        return persons;
     }
 }

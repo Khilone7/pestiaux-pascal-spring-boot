@@ -5,10 +5,12 @@ import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.FireStationRepository;
 import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Log4j2
 @RequiredArgsConstructor
 @Service
 public class PhoneAlertService {
@@ -31,18 +33,22 @@ public class PhoneAlertService {
     }
 
     private List<String> getAddressesByStation(Long station) {
-        return fireStationRepository.getAllFireStation()
+        List<String> addresses = fireStationRepository.getAllFireStation()
                 .stream()
                 .filter(f -> station.equals(f.getStation()))
                 .map(FireStation::getAddress)
                 .toList();
+        log.debug("Station {} covers {} addresses", station, addresses.size());
+        return addresses;
     }
 
     private List<String>getPhoneByAddresses(List<String>addresses){
-        return personRepository.getAllPerson()
+        List<String> phones = personRepository.getAllPerson()
                 .stream()
                 .filter(p -> addresses.contains(p.getAddress()))
                 .map(Person::getPhone)
                 .toList();
+        log.debug("Found {} phone numbers for {} addresses", phones.size(), addresses.size());
+        return phones;
     }
 }

@@ -8,6 +8,7 @@ import com.safetynet.api.repository.FireStationRepository;
 import com.safetynet.api.repository.MedicalRecordsRepository;
 import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class FloodStationService {
@@ -26,8 +28,8 @@ public class FloodStationService {
 
     public Map<String, List<ResidentDto>> getListResidentAndAddressAndMedicationByStation(List<Long> stationsNumbers) {
 
-        List<String> addresses = getAddressesByStationsNumber(stationsNumbers);
-        List<Person> personList = getPersonsByAddresses(addresses);
+        List<String> addresseList = getAddressesByStationsNumber(stationsNumbers);
+        List<Person> personList = getPersonsByAddresses(addresseList);
 
         Map<String, MedicalRecord> medicalRecordMap = medicalRecordsRepository.getAllMedicalRecord()
                 .stream()
@@ -42,17 +44,21 @@ public class FloodStationService {
     }
 
     private List<String> getAddressesByStationsNumber(List<Long> stationsNumbers) {
-        return fireStationRepository.getAllFireStation()
+        List<String> addresseList = fireStationRepository.getAllFireStation()
                 .stream()
                 .filter(f -> stationsNumbers.contains(f.getStation()))
                 .map(FireStation::getAddress)
                 .toList();
+        log.debug("There are {} addresses for {} station(s)", addresseList.size(), stationsNumbers.size());
+        return addresseList;
     }
 
     private List<Person> getPersonsByAddresses(List<String> addresses) {
-        return personRepository.getAllPerson()
+        List<Person> personList = personRepository.getAllPerson()
                 .stream()
                 .filter(p -> addresses.contains(p.getAddress()))
                 .toList();
+        log.debug("There are {} persons across {} addresses", personList.size(), addresses.size());
+        return personList;
     }
 }

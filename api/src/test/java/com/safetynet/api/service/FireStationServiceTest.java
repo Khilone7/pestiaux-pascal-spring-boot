@@ -82,9 +82,9 @@ class FireStationServiceTest {
     void getPersonsByStation_shouldReturnTwoPersonsAndCountsForStation1() {
         StationDto result = fireStationService.getPersonsByStation(1L);
 
-        assertThat(result.person()).hasSize(3);
+        assertThat(result.personList()).hasSize(3);
 
-        assertThat(result.person())
+        assertThat(result.personList())
                 .extracting("firstName", "lastName", "address", "phone")
                 .containsExactlyInAnyOrder(
                         tuple("Franck", "Dubosc", "24 rue de l'église", "123"),
@@ -99,9 +99,9 @@ class FireStationServiceTest {
     void getPersonsByStation_shouldReturnOnePersonAndCountsForStation2() {
         StationDto result = fireStationService.getPersonsByStation(2L);
 
-        assertThat(result.person()).hasSize(1);
+        assertThat(result.personList()).hasSize(1);
 
-        assertThat(result.person())
+        assertThat(result.personList())
                 .extracting("firstName", "lastName", "address", "phone")
                 .containsExactly(tuple("Mireille", "Mathieu", "2 rue de l'église", "707"));
 
@@ -113,7 +113,7 @@ class FireStationServiceTest {
     void getPersonsByStation_shouldReturnEmptyWhenStationUnknown() {
         StationDto result = fireStationService.getPersonsByStation(12L);
 
-        assertThat(result.person()).isEmpty();
+        assertThat(result.personList()).isEmpty();
         assertThat(result.child()).isZero();
         assertThat(result.adult()).isZero();
     }
