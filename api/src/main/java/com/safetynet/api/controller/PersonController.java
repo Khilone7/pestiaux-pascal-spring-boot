@@ -1,14 +1,13 @@
 package com.safetynet.api.controller;
 
-import com.safetynet.api.controller.dto.DeletePersonDto;
+import com.safetynet.api.controller.dto.FullNameDto;
 import com.safetynet.api.model.Person;
 import com.safetynet.api.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("/person")
 @RequiredArgsConstructor
 public class PersonController {
@@ -28,7 +27,7 @@ public class PersonController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deletePerson(@RequestBody DeletePersonDto fullName){
+    public ResponseEntity<Void> deletePerson(@RequestBody FullNameDto fullName){
         personService.deletePerson(fullName);
         return ResponseEntity.ok().build();
     }

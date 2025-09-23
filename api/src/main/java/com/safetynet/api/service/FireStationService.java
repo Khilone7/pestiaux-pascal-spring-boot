@@ -119,8 +119,4 @@ public class FireStationService {
         fireStationDto.address().ifPresent(fireStationRepository::deleteByAddress);
         fireStationDto.station().ifPresent(fireStationRepository::deleteByStationNumber);
     }
-
-    public List<FireStation> getAllStation(){
-        return fireStationRepository.getAllFireStation();
-    }
 }

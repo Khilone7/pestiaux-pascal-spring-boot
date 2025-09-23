@@ -1,6 +1,6 @@
 package com.safetynet.api.service;
 
-import com.safetynet.api.controller.dto.DeletePersonDto;
+import com.safetynet.api.controller.dto.FullNameDto;
 import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class PersonService {
         }
     }
 
-    public void deletePerson(DeletePersonDto fullName){
+    public void deletePerson(FullNameDto fullName){
         if (exists(fullName.firstName(), fullName.lastName())){
             personRepository.deletePerson(fullName.firstName(), fullName.lastName());
         } else {

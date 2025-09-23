@@ -9,9 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -19,11 +16,6 @@ import java.util.List;
 public class FireStationController {
 
     private final FireStationService fireStationService;
-
-    @GetMapping("/all")
-    public List<FireStation> allStation (){
-        return fireStationService.getAllStation();
-    }
 
     @GetMapping
     public StationDto getPersonByStationAndChildCount(@RequestParam("stationNumber") Long stationNumber){

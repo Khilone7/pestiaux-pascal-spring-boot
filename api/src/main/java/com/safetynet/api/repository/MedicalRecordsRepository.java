@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface MedicalRecordsRepository {
     List<MedicalRecord> getAllMedicalRecord();
+    void addMedicalRecord(MedicalRecord medicalRecord);
+    void updateMedicalRecord(MedicalRecord medicalRecord);
+    void deleteMedicalRecord(String firstName, String lastName);
 }
