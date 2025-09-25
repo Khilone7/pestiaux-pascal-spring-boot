@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,5 +54,41 @@ class FireStationControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{}"));
+    }
+
+    @Test
+    void addFireStation_returns201() throws Exception {
+        String body = """
+        { "address":"1509 Culver St", "station":3 }
+        """;
+
+        mockMvc.perform(post("/firestation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void updateFireStation_returns204() throws Exception {
+        String body = """
+        { "address":"1509 Culver St", "station":4 }
+        """;
+
+        mockMvc.perform(put("/firestation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteFireStation_returns204() throws Exception {
+        String body = """
+        { "address":"1509 Culver St", "station":4 }
+        """;
+
+        mockMvc.perform(delete("/firestation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isNoContent());
     }
 }
