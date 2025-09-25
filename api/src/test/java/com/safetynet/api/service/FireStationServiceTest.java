@@ -19,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,17 +70,16 @@ class FireStationServiceTest {
         person4 = buildPerson("Alban", "Ivanov", "31 rue du stade", "999");
         personMr4 = buildMr("Alban", "Ivanov", LocalDate.now().minusYears(8));
 
-        when(personRepository.getAllPerson())
+        lenient().when(personRepository.getAllPerson())
                 .thenReturn(List.of(person1, person2, person3, person4));
-        when(medicalRecordsRepository.getAllMedicalRecord())
+        lenient().when(medicalRecordsRepository.getAllMedicalRecord())
                 .thenReturn(List.of(personMr1, personMr2, personMr3, personMr4));
         when(fireStationRepository.getAllFireStation())
                 .thenReturn(List.of(station1, station2, station3));
-
     }
 
     @Test
-    void getPersonsByStation_shouldReturnTwoPersonsAndCountsForStation1() {
+    void getPersonsByStationShouldReturnTwoPersonsAndCountsForStation1() {
         StationDto result = fireStationService.getPersonsByStation(1L);
 
         assertThat(result.personList()).hasSize(3);
@@ -96,7 +96,7 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getPersonsByStation_shouldReturnOnePersonAndCountsForStation2() {
+    void getPersonsByStationShouldReturnOnePersonAndCountsForStation2() {
         StationDto result = fireStationService.getPersonsByStation(2L);
 
         assertThat(result.personList()).hasSize(1);
@@ -110,11 +110,12 @@ class FireStationServiceTest {
     }
 
     @Test
-    void getPersonsByStation_shouldReturnEmptyWhenStationUnknown() {
+    void getPersonsByStationShouldReturnEmptyWhenStationUnknown() {
         StationDto result = fireStationService.getPersonsByStation(12L);
 
+        assertThat(result).isNotNull();
         assertThat(result.personList()).isEmpty();
-        assertThat(result.child()).isZero();
-        assertThat(result.adult()).isZero();
+        assertThat(result.child()).isNull();
+        assertThat(result.adult()).isNull();
     }
 }

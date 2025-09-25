@@ -99,9 +99,11 @@ class FireServiceTest {
     }
 
     @Test
-    void getErrorWhenWrongAddress() {
-        assertThatThrownBy(() -> fireService.getPersonAndStationByAddress("242 rue de l'église"))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("No station number found");
+    void getEmptyJsonWhenWrongAddress() {
+        ListPersonAndStationDto dto = fireService.getPersonAndStationByAddress("242 rue de l'église");
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.listPerson()).isEmpty();
+        assertThat(dto.stationNumber()).isNull();
     }
 }

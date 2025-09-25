@@ -24,7 +24,6 @@ class ChildAlertControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private ChildAlertService childAlertService;
 
@@ -32,25 +31,24 @@ class ChildAlertControllerTest {
     void getChildByAddressReturns200AndExpectedStructure() throws Exception {
         ChildAlertResponseDto dto = new ChildAlertResponseDto(
                 List.of(new ChildDto("Alice", "Dupont", 7)),
-                List.of(new AdultDto("Bob", "Dujardin"))
-        );
-        given(childAlertService.getChildByAddress("A1")).willReturn(dto);
+                List.of(new AdultDto("Bob", "Dujardin")));
 
-        mockMvc.perform(get("/childAlert").param("address", "A1")
+        given(childAlertService.getChildByAddress("Paris")).willReturn(dto);
+
+        mockMvc.perform(get("/childAlert").param("address", "Paris")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.childList").exists())
-                .andExpect(jsonPath("$.adultList").exists());
+                .andExpect(jsonPath("$.childList.length()").value(1))
+                .andExpect(jsonPath("$.adultList.length()").value(1));
     }
 
     @Test
     void getChildByAddressReturns200AndEmptyJsonWhenNotFound() throws Exception {
-        given(childAlertService.getChildByAddress("ZZ"))
-                .willReturn(new ChildAlertResponseDto(List.of(), List.of())); // DTO vide
+        given(childAlertService.getChildByAddress("ZZ")).willReturn(new ChildAlertResponseDto(List.of(), List.of()));
 
         mockMvc.perform(get("/childAlert").param("address", "ZZ")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{}")); // grâce à @JsonInclude(NON_EMPTY)
+                .andExpect(content().json("{}"));
     }
 }

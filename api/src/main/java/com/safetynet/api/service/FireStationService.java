@@ -29,6 +29,9 @@ public class FireStationService {
 
     public StationDto getPersonsByStation(Long station) {
         List<String> address = addressesByStation(station);
+        if (address.isEmpty()) {
+            return new StationDto(Collections.emptyList(), null, null);
+        }
         List<Person> listNonFilter = getPersonByAddresses(address);
 
         Long child = childNumber(listNonFilter);

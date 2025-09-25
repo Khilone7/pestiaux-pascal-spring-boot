@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,7 +30,14 @@ public class FireService {
 
     public ListPersonAndStationDto getPersonAndStationByAddress(String address) {
         Long stationNumber = getStationNumberByAddress(address);
+        if (stationNumber == null) {
+            return new ListPersonAndStationDto(Collections.emptyList(), null);
+        }
+
         List<Person> personList = getPersonByAddress(address);
+        if (personList.isEmpty()) {
+            return new ListPersonAndStationDto(Collections.emptyList(), stationNumber);
+        }
 
         Map<String, MedicalRecord> medicalRecordMap = medicalRecordsRepository.getAllMedicalRecord()
                 .stream()
@@ -59,7 +67,7 @@ public class FireService {
                 .filter(f -> f.getAddress().equals(address))
                 .map(FireStation::getStation)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No station number found for address " + address));
+                .orElse(null);
 
         log.debug("Station {} covers address '{}'", station, address);
         return station;
