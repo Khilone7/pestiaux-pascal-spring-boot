@@ -17,6 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Builds a map of addresses to residents (with age and medical details)
+ * for the set of fire station numbers provided.
+ * <p>
+ * Aggregates data from {@link PersonRepository}, {@link FireStationRepository} and
+ * {@link MedicalRecordsRepository}. Results are grouped by exact address string.
+ * Age is computed from {@link MedicalRecord#getBirthdate()} relative to the current date.
+ * </p>
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -26,6 +35,16 @@ public class FloodStationService {
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
+    /**
+     * Returns, for the given station numbers, the list of addresses covered and,
+     * for each address, the residents with contact and medical information.
+     * <p>
+     * The returned map uses the address as key and a list of {@link ResidentDto} as value.
+     * </p>
+     *
+     * @param stationsNumbers fire station numbers to include
+     * @return map from address to the list of residents at that address
+     */
     public Map<String, List<ResidentDto>> getListResidentAndAddressAndMedicationByStation(List<Long> stationsNumbers) {
 
         List<String> addresseList = getAddressesByStationsNumber(stationsNumbers);
@@ -43,6 +62,12 @@ public class FloodStationService {
                 }, Collectors.toList())));
     }
 
+    /**
+     * Collects all addresses served by any of the given fire station numbers.
+     *
+     * @param stationsNumbers fire station numbers
+     * @return list of addresses covered by these stations
+     */
     private List<String> getAddressesByStationsNumber(List<Long> stationsNumbers) {
         List<String> addresseList = fireStationRepository.getAllFireStation()
                 .stream()
@@ -53,6 +78,12 @@ public class FloodStationService {
         return addresseList;
     }
 
+    /**
+     * Returns all persons whose address belongs to the provided address list.
+     *
+     * @param addresses list of addresses
+     * @return persons living at any of the provided addresses
+     */
     private List<Person> getPersonsByAddresses(List<String> addresses) {
         List<Person> personList = personRepository.getAllPerson()
                 .stream()

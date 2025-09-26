@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST endpoint that returns the list of children (≤ 18 years) and
+ * adults (> 18 years) living at a specific address.
+ * <p>
+ * Delegates the computation to {@link ChildAlertService}.
+ * </p>
+ */
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -15,6 +22,16 @@ public class ChildAlertController {
 
     private final ChildAlertService childAlertService;
 
+    /**
+     * GET /childAlert
+     * <p>
+     * Returns the children and co-resident adults for the address provided
+     * as a request parameter.
+     * </p>
+     *
+     * @param address street address to query
+     * @return a {@link ChildAlertResponseDto} containing the list of children and adults
+     */
     @GetMapping("/childAlert")
     public ChildAlertResponseDto getChildByAddress(@RequestParam("address") String address) {
         log.info("REQUEST GET /childAlert?address={}", address);

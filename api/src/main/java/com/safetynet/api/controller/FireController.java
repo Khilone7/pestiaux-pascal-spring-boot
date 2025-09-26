@@ -8,6 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST endpoint that returns the residents of a given address along with
+ * the fire station number that serves that address.
+ * <p>
+ * Delegates the processing to {@link FireService}.
+ * </p>
+ */
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -15,6 +22,16 @@ public class FireController {
 
     private final FireService fireService;
 
+    /**
+     * GET /fire
+     * <p>
+     * Returns the list of residents living at the specified address together
+     * with the fire station number that covers it.
+     * </p>
+     *
+     * @param address street address to query
+     * @return a {@link ListPersonAndStationDto} containing residents and the station number
+     */
     @GetMapping("/fire")
     public ListPersonAndStationDto getListPersonAndStationByAddress(@RequestParam("address") String address) {
         log.info("REQUEST GET /fire?address={}", address);

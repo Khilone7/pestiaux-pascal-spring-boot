@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST endpoint that returns the phone numbers of all residents served by
+ * a specific fire station.
+ * <p>
+ * Delegates the processing to {@link PhoneAlertService}.
+ * </p>
+ */
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +23,16 @@ public class PhoneAlertController {
 
     private final PhoneAlertService phoneAlertService;
 
+    /**
+     * GET /phoneAlert
+     * <p>
+     * Returns the list of phone numbers for residents living at addresses
+     * covered by the specified fire station.
+     * </p>
+     *
+     * @param fireStationNumber fire station number to query (request parameter {@code firestation})
+     * @return list of phone numbers of residents covered by the given fire station
+     */
     @GetMapping("/phoneAlert")
     public List<String> getPhoneByStation(@RequestParam("firestation") Long fireStationNumber) {
         log.info("REQUEST GET /phoneAlert?firestation={}", fireStationNumber);

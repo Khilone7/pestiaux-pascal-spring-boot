@@ -8,6 +8,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
+
+/**
+ * REST controller exposing CRUD operations for {@link MedicalRecord} entries.
+ * <p>
+ * Base path: <strong>/medicalRecord</strong>.
+ * Delegates all operations to {@link MedicalRecordService}.
+ * </p>
+ */
 @Log4j2
 @RestController
 @RequestMapping("/medicalRecord")
@@ -16,6 +25,16 @@ public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
 
+    /**
+     * POST /medicalRecord
+     * <p>
+     * Creates a new medical record.
+     * </p>
+     *
+     * @param medicalRecord medical record to create
+     * @return HTTP 201 (Created) if the record is successfully created
+     * @throws IllegalStateException if a record with the same first and last name already exists
+     */
     @PostMapping
     public ResponseEntity<Void> addMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
         log.info("REQUEST POST /medicalRecord");
@@ -25,6 +44,16 @@ public class MedicalRecordController {
         return response;
     }
 
+    /**
+     * PUT /medicalRecord
+     * <p>
+     * Updates the medical record that matches the given first and last name.
+     * </p>
+     *
+     * @param medicalRecord record containing the updated information
+     * @return HTTP 204 (No Content) if the update is successful
+     * @throws NoSuchElementException if no record with the given names exists
+     */
     @PutMapping
     public ResponseEntity<Void> updateMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
         log.info("REQUEST PUT /medicalRecord");
@@ -34,6 +63,16 @@ public class MedicalRecordController {
         return response;
     }
 
+    /**
+     * DELETE /medicalRecord
+     * <p>
+     * Deletes the medical record identified by the specified first and last name.
+     * </p>
+     *
+     * @param fullName DTO carrying the first and last name of the record to delete
+     * @return HTTP 204 (No Content) if the deletion is successful
+     * @throws NoSuchElementException if no record with the given names exists
+     */
     @DeleteMapping
     public ResponseEntity<Void> deleteMedicalRecord(@RequestBody FullNameDto fullName) {
         log.info("REQUEST DELETE /medicalRecord");

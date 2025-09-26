@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST endpoint that returns, for a set of fire station numbers,
+ * the residents grouped by address together with their medical details.
+ * <p>
+ * Delegates the processing to {@link FloodStationService}.
+ * </p>
+ */
 @Log4j2
 @RequiredArgsConstructor
 @RestController
@@ -18,6 +25,18 @@ public class FloodStationController {
 
     private final FloodStationService floodStationService;
 
+    /**
+     * GET /flood/stations
+     * <p>
+     * For the given list of station numbers, returns a map where each key is
+     * an address served by those stations and each value is the list of
+     * {@link ResidentDto} objects representing the residents of that address,
+     * including their age and medical information.
+     * </p>
+     *
+     * @param stationNumbers list of fire station numbers to query
+     * @return map of address → list of residents with medical details
+     */
     @GetMapping("flood/stations")
     public Map<String,List<ResidentDto>> getListResidentAndAddressAndMedicationByStation (@RequestParam("stations") List<Long> stationNumbers){
         log.info("REQUEST GET /flood/stations?stations={}", stationNumbers);

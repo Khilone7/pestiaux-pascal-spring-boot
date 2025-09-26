@@ -19,6 +19,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Provides information about residents and the fire station serving a specific address.
+ * <p>
+ * Combines data from {@link PersonRepository}, {@link FireStationRepository} and
+ * {@link MedicalRecordsRepository} to produce a list of residents (with age and
+ * medical details) together with the number of the fire station that covers the
+ * given address.
+ * </p>
+ */
 @Log4j2
 @RequiredArgsConstructor
 @Service
@@ -28,6 +37,21 @@ public class FireService {
     private final FireStationRepository fireStationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
+    /**
+     * Returns the list of residents for the specified address and the number of
+     * the fire station that covers it.
+     * <p>
+     * Each resident is enriched with age and medical information taken from
+     * {@link MedicalRecord}.
+     * </p>
+     *
+     * @param address street address to look up
+     * @return a {@link ListPersonAndStationDto} containing
+     *         the residents’ details and the station number;
+     *         if no station covers the address, the person list is empty and
+     *         the station number is {@code null}
+     * @throws IllegalStateException if a resident has no matching medical record
+     */
     public ListPersonAndStationDto getPersonAndStationByAddress(String address) {
         Long stationNumber = getStationNumberByAddress(address);
         if (stationNumber == null) {
@@ -56,11 +80,25 @@ public class FireService {
         return new ListPersonAndStationDto(personDtoList, stationNumber);
     }
 
+    /**
+     * Builds a {@link PersonAndMedicationDto} with the resident’s last name,
+     * phone number, age (in full years) and medical information.
+     *
+     * @param person         resident whose information is to be included
+     * @param medicalRecord  resident’s medical record
+     * @return a fully populated {@link PersonAndMedicationDto}
+     */
     private PersonAndMedicationDto buildPersonDto(Person person, MedicalRecord medicalRecord) {
         int age = Period.between(medicalRecord.getBirthdate(), LocalDate.now()).getYears();
         return new PersonAndMedicationDto(person.getLastName(), person.getPhone(), age, medicalRecord.getMedications(), medicalRecord.getAllergies());
     }
 
+    /**
+     * Finds the fire station number that covers the given address.
+     *
+     * @param address street address to match exactly
+     * @return the station number, or {@code null} if no station covers the address
+     */
     private Long getStationNumberByAddress(String address) {
         Long station = fireStationRepository.getAllFireStation()
                 .stream()
@@ -73,6 +111,15 @@ public class FireService {
         return station;
     }
 
+    /**
+     * Returns all persons whose address matches the given value.
+     * <p>
+     * Matching is a simple string equality check.
+     * </p>
+     *
+     * @param address street address to match exactly
+     * @return list of persons living at the given address
+     */
     private List<Person> getPersonByAddress(String address) {
         List<Person> list = personRepository.getAllPerson()
                 .stream()
