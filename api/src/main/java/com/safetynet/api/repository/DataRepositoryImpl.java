@@ -27,7 +27,7 @@ public class DataRepositoryImpl implements DataRepository {
      */
     public DataRepositoryImpl(ObjectMapper mapper) {
         this.mapper = mapper;
-        this.allData = getDataOnce();
+        this.allData = getDataInJson();
     }
 
     /**
@@ -37,11 +37,20 @@ public class DataRepositoryImpl implements DataRepository {
      *
      * @return fully populated {@link DataDto}
      */
-    public DataDto getDataOnce(){
-        try{
+    public DataDto getDataInJson() {
+        try {
             return mapper.readValue(new File("src/main/resources/Data.json"), DataDto.class);
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new UncheckedIOException("Failed to read JSON file", e);
+        }
+    }
+
+    @Override
+    public void saveAllData(DataDto allData) {
+        try {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File("src/main/resources/Data.json"), allData);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to write Json file", e);
         }
     }
 
@@ -49,7 +58,7 @@ public class DataRepositoryImpl implements DataRepository {
      * {@inheritDoc}
      */
     @Override
-    public DataDto getAllData(){
+    public DataDto getAllData() {
         return allData;
     }
 }

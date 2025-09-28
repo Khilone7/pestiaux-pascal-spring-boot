@@ -17,4 +17,6 @@ public interface DataRepository {
      * @return all persons, fire stations and medical records
      */
     DataDto getAllData();
+
+    void saveAllData(DataDto allData);
 }

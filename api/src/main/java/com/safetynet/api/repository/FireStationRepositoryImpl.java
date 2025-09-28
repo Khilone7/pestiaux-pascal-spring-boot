@@ -1,6 +1,7 @@
 package com.safetynet.api.repository;
 
 import com.safetynet.api.model.FireStation;
+import com.safetynet.api.repository.dto.DataDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,9 +16,10 @@ import java.util.ListIterator;
  * </p>
  */
 @Repository
-public class FireStationRepositoryImpl implements FireStationRepository{
+public class FireStationRepositoryImpl implements FireStationRepository {
 
     private final List<FireStation> fireStationList;
+    private final DataRepository dataRepository;
 
     /**
      * Initializes the repository by loading the list of fire stations
@@ -25,8 +27,9 @@ public class FireStationRepositoryImpl implements FireStationRepository{
      *
      * @param dataRepository source of the initial fire station data;
      */
-    public FireStationRepositoryImpl(DataRepository dataRepository){
-        this.fireStationList=dataRepository.getAllData().firestations();
+    public FireStationRepositoryImpl(DataRepository dataRepository) {
+        this.fireStationList = dataRepository.getAllData().firestations();
+        this.dataRepository = dataRepository;
     }
 
     /**
@@ -41,8 +44,9 @@ public class FireStationRepositoryImpl implements FireStationRepository{
      * {@inheritDoc}
      */
     @Override
-    public void addFireStation(FireStation fireStation){
+    public void addFireStation(FireStation fireStation) {
         fireStationList.add(fireStation);
+        saveData();
     }
 
     /**
@@ -51,12 +55,13 @@ public class FireStationRepositoryImpl implements FireStationRepository{
     @Override
     public void updateStationNumber(FireStation fireStation) {
         ListIterator<FireStation> iterator = fireStationList.listIterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             FireStation f = iterator.next();
-            if (f.getAddress().equals(fireStation.getAddress())){
+            if (f.getAddress().equals(fireStation.getAddress())) {
                 iterator.set(fireStation);
             }
         }
+        saveData();
     }
 
     /**
@@ -65,6 +70,7 @@ public class FireStationRepositoryImpl implements FireStationRepository{
     @Override
     public void deleteByAddress(String address) {
         fireStationList.removeIf(f -> f.getAddress().equals(address));
+        saveData();
     }
 
     /**
@@ -73,5 +79,12 @@ public class FireStationRepositoryImpl implements FireStationRepository{
     @Override
     public void deleteByStationNumber(Long station) {
         fireStationList.removeIf(f -> f.getStation().equals(station));
+        saveData();
+    }
+
+    private void saveData() {
+        DataDto current = dataRepository.getAllData();
+        DataDto toSave = new DataDto(current.persons(), fireStationList, current.medicalrecords());
+        dataRepository.saveAllData(toSave);
     }
 }

@@ -1,6 +1,7 @@
 package com.safetynet.api.repository;
 
 import com.safetynet.api.model.MedicalRecord;
+import com.safetynet.api.repository.dto.DataDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.ListIterator;
 public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
 
     private final List<MedicalRecord> medicalRecordList;
+    private final DataRepository dataRepository;
 
     /**
      * Initializes the repository by retrieving the medical records
@@ -27,6 +29,7 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
      */
     public MedicalRecordsRepositoryImpl(DataRepository dataRepository) {
         this.medicalRecordList = dataRepository.getAllData().medicalrecords();
+        this.dataRepository = dataRepository;
     }
 
     /**
@@ -43,6 +46,7 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
     @Override
     public void addMedicalRecord(MedicalRecord medicalRecord) {
         medicalRecordList.add(medicalRecord);
+        saveData();
     }
 
     /**
@@ -63,6 +67,7 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
                 iterator.set(medicalRecord);
             }
         }
+        saveData();
     }
 
     /**
@@ -72,5 +77,12 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
     public void deleteMedicalRecord(String firstName, String lastName) {
         medicalRecordList.removeIf(mr -> mr.getFirstName().equals(firstName)
                 && mr.getLastName().equals(lastName));
+        saveData();
+    }
+
+    private void saveData() {
+        DataDto current = dataRepository.getAllData();
+        DataDto toSave = new DataDto(current.persons(), current.firestations(), medicalRecordList);
+        dataRepository.saveAllData(toSave);
     }
 }

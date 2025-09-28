@@ -1,6 +1,7 @@
 package com.safetynet.api.repository;
 
 import com.safetynet.api.model.Person;
+import com.safetynet.api.repository.dto.DataDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.ListIterator;
 public class PersonRepositoryImpl implements PersonRepository {
 
     private final List<Person> allPerson;
+    private final DataRepository dataRepository;
 
     /**
      * Initializes the repository by retrieving the person list
@@ -27,6 +29,7 @@ public class PersonRepositoryImpl implements PersonRepository {
      */
     public PersonRepositoryImpl(DataRepository dataRepository) {
         this.allPerson = dataRepository.getAllData().persons();
+        this.dataRepository = dataRepository;
     }
 
     /**
@@ -43,6 +46,7 @@ public class PersonRepositoryImpl implements PersonRepository {
     @Override
     public void addPerson(Person person) {
         allPerson.add(person);
+        saveData();
     }
 
     /**
@@ -63,6 +67,7 @@ public class PersonRepositoryImpl implements PersonRepository {
                 iterator.set(person);
             }
         }
+        saveData();
     }
 
     /**
@@ -72,5 +77,12 @@ public class PersonRepositoryImpl implements PersonRepository {
     public void deletePerson(String firstName, String lastName) {
         allPerson.removeIf(p -> p.getFirstName().equals(firstName)
                 && p.getLastName().equals(lastName));
+        saveData();
+    }
+
+    private void saveData() {
+        DataDto current = dataRepository.getAllData();
+        DataDto toSave = new DataDto(allPerson, current.firestations(), current.medicalrecords());
+        dataRepository.saveAllData(toSave);
     }
 }
