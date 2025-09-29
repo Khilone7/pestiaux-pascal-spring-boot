@@ -4,11 +4,16 @@ import com.safetynet.api.controller.dto.FullNameDto;
 import com.safetynet.api.model.MedicalRecord;
 import com.safetynet.api.repository.MedicalRecordsRepository;
 import com.safetynet.api.service.MedicalRecordService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,6 +31,19 @@ class MedicalRecordServiceIT {
     MedicalRecordService medicalRecordService;
 
     MedicalRecord charles, john, lewis;
+
+    private static final Path originalFile = Path.of("src/main/resources/Data.json");
+    private static final Path backupFile = Path.of("src/test/resources/DataBackup.json");
+
+    @BeforeAll
+    static void backupJson() throws Exception {
+        Files.copy(originalFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @AfterAll
+    static void restoreJson() throws Exception {
+        Files.copy(backupFile, originalFile, StandardCopyOption.REPLACE_EXISTING);
+    }
 
     @BeforeEach
     void setUp() {

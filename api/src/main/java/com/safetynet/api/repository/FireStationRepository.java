@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Provides in-memory CRUD operations for {@link FireStation} entries.
- * <p>This repository is read/write but does not persist data to disk;
- * all changes exist only for the lifetime of the application.</p>
+ * Provides CRUD operations for {@link FireStation} entries with
+ * in-memory storage and immediate JSON persistence.
+ *
+ * <p>Data is kept in memory and every add, update or delete also
+ * writes the full dataset back to the JSON file.</p>
  */
 @Repository
 public interface FireStationRepository {
@@ -21,32 +23,33 @@ public interface FireStationRepository {
     List<FireStation> getAllFireStation();
 
     /**
-     * Adds a new fire station mapping.
+     * Adds a fire-station mapping and immediately persists the change.
      *
-     * @param fireStation fire station to add
+     * @param fireStation FireStation object to add
      */
     void addFireStation(FireStation fireStation);
 
     /**
-     * Updates the station number for the fire station that matches
-     * the address contained in the given {@link FireStation} object.
+     * Updates all entries whose address matches the given object,
+     * then persists the change.
      *
-     * @param fireStation object holding the target address and the
-     *                    new station number
+     * @param fireStation updated FireStation object
      */
     void updateStationNumber(FireStation fireStation);
 
     /**
-     * Removes the fire station entry that matches the specified address.
+     * Deletes all entries whose address matches the given value,
+     * then persists the change.
      *
      * @param address street address to match
      */
     void deleteByAddress(String address);
 
     /**
-     * Removes all fire station entries that use the specified station number.
+     * Deletes all entries whose station number matches the given value,
+     * then persists the change.
      *
-     * @param station station number whose entries should be deleted
+     * @param station station number to match
      */
     void deleteByStationNumber(Long station);
 }

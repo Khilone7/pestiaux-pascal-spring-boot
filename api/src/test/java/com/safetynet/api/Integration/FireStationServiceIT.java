@@ -4,11 +4,16 @@ import com.safetynet.api.controller.dto.DeleteFireStationDto;
 import com.safetynet.api.model.FireStation;
 import com.safetynet.api.repository.FireStationRepository;
 import com.safetynet.api.service.FireStationService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -24,8 +29,20 @@ class FireStationServiceIT {
     @Autowired
     FireStationService fireStationService;
 
-
     FireStation newFireStation, existingFireStation, nonExistingFireStation;
+
+    private static final Path originalFile = Path.of("src/main/resources/Data.json");
+    private static final Path backupFile = Path.of("src/test/resources/DataBackup.json");
+
+    @BeforeAll
+    static void backupJson() throws Exception {
+        Files.copy(originalFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @AfterAll
+    static void restoreJson() throws Exception {
+        Files.copy(backupFile, originalFile, StandardCopyOption.REPLACE_EXISTING);
+    }
 
     @BeforeEach
     void setUp() {

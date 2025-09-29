@@ -10,8 +10,10 @@ import java.io.UncheckedIOException;
 
 /**
  * Default {@link DataRepository} implementation.
- * <p>Reads <strong>Data.json</strong> once during application startup
- * and caches the parsed result in memory for the lifetime of the application.</p>
+ *
+ * <p>Loads <code>Data.json</code> once at application startup and keeps the
+ * resulting {@link DataDto} in memory. Calls to {@link #saveAllData(DataDto)}
+ * write the current state back to the JSON file.</p>
  */
 @Repository
 public class DataRepositoryImpl implements DataRepository {
@@ -45,6 +47,9 @@ public class DataRepositoryImpl implements DataRepository {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void saveAllData(DataDto allData) {
         try {

@@ -6,43 +6,47 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Provides in-memory CRUD operations for {@link Person} entries.
- * <p>
- * This repository stores person records loaded at application startup
- * and keeps them in memory for the lifetime of the application.
- * No persistent storage is used.
- * </p>
+ * CRUD access to {@link Person} records with immediate JSON persistence.
+ *
+ * <p>Data is loaded once at startup and kept in memory. Every call to
+ * {@link #addPerson(Person)}, {@link #updatePerson(Person)} or
+ * {@link #deletePerson(String, String)} also writes the whole dataset
+ * back to the JSON file.</p>
+ *
+ * <p>Updates and deletions match entries by <strong>case-sensitive</strong>
+ * pair (firstName, lastName). All matching entries are affected.</p>
  */
 @Repository
 public interface PersonRepository {
 
     /**
-     * Returns all person records currently held in memory.
+     * Returns the live in-memory list of persons.
      *
-     * @return list of {@link Person} objects
+     * @return mutable list of {@link Person}
      */
     List<Person> getAllPerson();
 
     /**
-     * Adds a new person record to the in-memory store.
+     * Adds a new person and immediately persists the change.
      *
-     * @param person person record to add
+     * @param person Person object to add
      */
     void addPerson(Person person);
 
     /**
-     * Updates the person record that matches the same first and last name
-     * as the provided {@link Person} instance.
+     * Replaces <strong>all</strong> entries whose (firstName, lastName)
+     * match the given {@link Person}, then persists the change.
      *
-     * @param person person record containing the updated information
+     * @param person updated Person object
      */
     void updatePerson(Person person);
 
     /**
-     * Deletes the person record identified by the specified first and last name.
+     * Removes <strong>all</strong> entries whose (firstName, lastName)
+     * match the given values, then persists the change.
      *
-     * @param firstName given name of the person to remove
-     * @param lastName  family name of the person to remove
+     * @param firstName given name
+     * @param lastName  family name
      */
     void deletePerson(String firstName, String lastName);
 }

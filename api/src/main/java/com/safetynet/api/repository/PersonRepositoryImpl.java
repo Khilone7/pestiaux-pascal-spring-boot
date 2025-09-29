@@ -8,12 +8,17 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Default in-memory implementation of {@link PersonRepository}.
- * <p>
- * Loads all person records from the JSON file at application startup
- * through {@link DataRepository} and keeps them in memory for the entire
- * lifetime of the application. No further disk access or persistence occurs.
- * </p>
+ * Default in-memory {@link PersonRepository} implementation with
+ * write-through JSON persistence.
+ *
+ * <p>Holds a live reference to the persons list from
+ * {@link DataRepository#getAllData()}. Each CRUD operation writes the
+ * entire dataset back to the JSON file through
+ * {@link DataRepository#saveAllData(DataDto)}.</p>
+ *
+ * <p>Not thread-safe. Updates and deletions match entries by
+ * <strong>case-sensitive</strong> pair (firstName, lastName) and affect
+ * all matching entries.</p>
  */
 @Repository
 public class PersonRepositoryImpl implements PersonRepository {
@@ -22,8 +27,8 @@ public class PersonRepositoryImpl implements PersonRepository {
     private final DataRepository dataRepository;
 
     /**
-     * Initializes the repository by retrieving the person list
-     * from the {@link DataRepository}.
+     * Creates the repository and loads the initial persons list from
+     * the {@link DataRepository}.
      *
      * @param dataRepository source of the initial person data
      */
@@ -80,6 +85,10 @@ public class PersonRepositoryImpl implements PersonRepository {
         saveData();
     }
 
+    /**
+     * Persists the current state of all data (persons, fire stations,
+     * medical records) to the JSON file.
+     */
     private void saveData() {
         DataDto current = dataRepository.getAllData();
         DataDto toSave = new DataDto(allPerson, current.firestations(), current.medicalrecords());

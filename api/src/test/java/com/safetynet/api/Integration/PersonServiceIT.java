@@ -4,11 +4,16 @@ import com.safetynet.api.controller.dto.FullNameDto;
 import com.safetynet.api.model.Person;
 import com.safetynet.api.repository.PersonRepository;
 import com.safetynet.api.service.PersonService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +29,19 @@ class PersonServiceIT {
     private PersonService personService;
 
     Person charles, john, lewis;
+
+    private static final Path originalFile = Path.of("src/main/resources/Data.json");
+    private static final Path backupFile = Path.of("src/test/resources/DataBackup.json");
+
+    @BeforeAll
+    static void backupJson() throws Exception {
+        Files.copy(originalFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @AfterAll
+    static void restoreJson() throws Exception {
+        Files.copy(backupFile, originalFile, StandardCopyOption.REPLACE_EXISTING);
+    }
 
     @BeforeEach
     void setUp() {
@@ -92,7 +110,7 @@ class PersonServiceIT {
     @Test
     void deletePersonShouldDecreaseListSize() {
         int sizeBefore = personRepository.getAllPerson().size();
-        FullNameDto peterFullName = new FullNameDto ("Peter", "Duncan");
+        FullNameDto peterFullName = new FullNameDto("Peter", "Duncan");
 
         personService.deletePerson(peterFullName);
         assertThat(personRepository.getAllPerson()).hasSize(sizeBefore - 1);
@@ -100,7 +118,7 @@ class PersonServiceIT {
 
     @Test
     void deleteNonExistingPersonShouldThrow() {
-        FullNameDto fullName = new FullNameDto ("Zinedine", "Zidane");
+        FullNameDto fullName = new FullNameDto("Zinedine", "Zidane");
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> personService.deletePerson(fullName));
     }

@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Default in-memory implementation of {@link FireStationRepository}.
- * <p>
- * Loads all fire station records from the JSON file at application startup
- * through {@link DataRepository} and keeps them in memory for the entire
- * lifetime of the application. No further disk access or persistence occurs.
- * </p>
+ * Default in-memory {@link FireStationRepository} implementation with
+ * write-through JSON persistence.
+ *
+ * <p>Holds a live reference to the fire-station list from
+ * {@link DataRepository#getAllData()}. Each add, update or delete
+ * immediately writes the entire dataset back to the JSON file through
+ * {@link DataRepository#saveAllData(DataDto)}.</p>
+ *
+ * <p>Not thread-safe. Updates and deletions affect <strong>all</strong>
+ * entries that match the criteria (case-sensitive).</p>
  */
 @Repository
 public class FireStationRepositoryImpl implements FireStationRepository {
@@ -22,10 +26,10 @@ public class FireStationRepositoryImpl implements FireStationRepository {
     private final DataRepository dataRepository;
 
     /**
-     * Initializes the repository by loading the list of fire stations
+     * Creates the repository and loads the initial fire-station list
      * from the {@link DataRepository}.
      *
-     * @param dataRepository source of the initial fire station data;
+     * @param dataRepository source of the initial fire-station data
      */
     public FireStationRepositoryImpl(DataRepository dataRepository) {
         this.fireStationList = dataRepository.getAllData().firestations();
@@ -82,6 +86,10 @@ public class FireStationRepositoryImpl implements FireStationRepository {
         saveData();
     }
 
+    /**
+     * Persists the current full dataset (persons, fire stations,
+     * medical records) to the JSON file.
+     */
     private void saveData() {
         DataDto current = dataRepository.getAllData();
         DataDto toSave = new DataDto(current.persons(), fireStationList, current.medicalrecords());

@@ -4,9 +4,10 @@ import com.safetynet.api.repository.dto.DataDto;
 import org.springframework.stereotype.Repository;
 
 /**
- * Repository providing read-only access to the data loaded from the JSON file.
- * <p>The content is loaded once at application startup and then kept in memory;
- * no further disk access is performed.</p>
+ * Repository for the JSON-backed application data.
+ *
+ * <p>Holds a single in-memory {@link DataDto} snapshot loaded at startup.
+ * Callers can persist the current state back to the JSON file when needed.</p>
  */
 @Repository
 public interface DataRepository {
@@ -18,5 +19,11 @@ public interface DataRepository {
      */
     DataDto getAllData();
 
+    /**
+     * Persists the given dataset to the JSON file.
+     *
+     * @param allData dataset to save
+     * @throws java.io.UncheckedIOException if writing fails
+     */
     void saveAllData(DataDto allData);
 }

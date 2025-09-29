@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Default in-memory implementation of {@link MedicalRecordsRepository}.
- * <p>
- * Loads all medical records from the JSON file once at application startup
- * via {@link DataRepository} and keeps them in memory for the lifetime
- * of the application. No further disk access or persistence is performed.
- * </p>
+ * Default in-memory {@link MedicalRecordsRepository} implementation with
+ * write-through JSON persistence.
+ *
+ * <p>Holds a live reference to the medical-record list from
+ * {@link DataRepository#getAllData()}. Each add, update or delete
+ * immediately writes the entire dataset back to the JSON file through
+ * {@link DataRepository#saveAllData(DataDto)}.</p>
+ *
+ * <p>Not thread-safe. Updates and deletions affect <strong>all</strong>
+ * entries that match the given first/last name pair (case-sensitive).</p>
  */
 @Repository
 public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
@@ -22,7 +26,7 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
     private final DataRepository dataRepository;
 
     /**
-     * Initializes the repository by retrieving the medical records
+     * Creates the repository and loads the initial medical-record list
      * from the {@link DataRepository}.
      *
      * @param dataRepository source of the initial medical record data
@@ -80,6 +84,10 @@ public class MedicalRecordsRepositoryImpl implements MedicalRecordsRepository {
         saveData();
     }
 
+    /**
+     * Persists the current full dataset (persons, fire stations,
+     * medical records) to the JSON file.
+     */
     private void saveData() {
         DataDto current = dataRepository.getAllData();
         DataDto toSave = new DataDto(current.persons(), current.firestations(), medicalRecordList);
